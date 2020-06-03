@@ -1,6 +1,12 @@
 const express = require('express');
+const connectDB = require('./config/db');
 
 const app = express();
+
+connectDB();
+
+// Init Middleware
+app.use(express.json({ extended: false }));
 
 //producttion 会从 process 里面读
 //开发环境下是 5000
