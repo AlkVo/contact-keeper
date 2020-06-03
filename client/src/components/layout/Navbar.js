@@ -9,10 +9,16 @@ const Navbar = ({ title, icon }) => {
       </h1>
       <ul>
         <li>
-          <Link to='/'>Home</Link>
+          <Link to='/'>主页</Link>
         </li>
         <li>
-          <Link to='/about'>About</Link>
+          <Link to='/about'>关于</Link>
+        </li>
+        <li>
+          <Link to='/rigster'>注册</Link>
+        </li>
+        <li>
+          <Link to='/login'>登录</Link>
         </li>
       </ul>
     </div>
