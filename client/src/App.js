@@ -8,8 +8,15 @@ import ContactState from './context/contact/contactState';
 import AuthState from './context/auth/AuthState';
 import Register from './components/auth/Register';
 import Login from './components/auth/Login';
+
 import AlterState from './context/alter/AlterState';
 import Alter from './components/layout/Alters';
+
+import setAuthToken from './context/utils/setAuthToken';
+
+if (localStorage.token) {
+  setAuthToken(localStorage.token);
+}
 const App = () => {
   return (
     <AuthState>
