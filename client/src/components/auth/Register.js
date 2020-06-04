@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
+import alterContext from '../../context/alter/alertContext';
 const Register = () => {
   const [user, setUser] = useState({
     name: '',
@@ -7,10 +8,17 @@ const Register = () => {
     password2: '',
   });
 
+  const AlterContext = useContext(alterContext);
+  const { setAlter } = AlterContext;
   const { name, email, password, password2 } = user;
+
   const onSubmit = (e) => {
     e.preventDefault();
-    console.log('注册用户');
+    if (name === '' || email === '' || password === '' || password2 === '') {
+      setAlter('请输入所有信息', 'danger');
+    } else if (password !== password2) {
+      setAlter('密码不一致，请重新输入', 'danger');
+    }
   };
 
   const onChange = (e) => setUser({ ...user, [e.target.name]: e.target.value });
@@ -57,7 +65,7 @@ const Register = () => {
           ></input>
         </div>
         <input
-          type='sumbmit'
+          type='submit'
           value='注册'
           className='btn btn-primary btn-block'
         ></input>
