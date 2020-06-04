@@ -9,6 +9,7 @@ const Alter = () => {
     alters.map((alter) => (
       <div key={alter.id} className={`alter alter-${alter.type}`}>
         <i className='fas fa-info-circle'></i>
+        {'  '}
         {alter.msg}
       </div>
     ))
