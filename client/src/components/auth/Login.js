@@ -8,7 +8,7 @@ const Login = () => {
   const { email, password } = user;
   const onSubmit = (e) => {
     e.preventDefault();
-    console.log('注册用户');
+    console.log('登录用户');
   };
 
   const onChange = (e) => setUser({ ...user, [e.target.name]: e.target.value });
@@ -37,7 +37,7 @@ const Login = () => {
           ></input>
         </div>
         <input
-          type='sumbmit'
+          type='submit'
           value='登录'
           className='btn btn-primary btn-block'
         ></input>
