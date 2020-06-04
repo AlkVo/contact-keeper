@@ -1,6 +1,8 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import alterContext from '../../context/alter/alertContext';
-const Register = () => {
+import authContext from '../../context/auth/authContext';
+
+const Register = (props) => {
   const [user, setUser] = useState({
     name: '',
     email: '',
@@ -10,7 +12,22 @@ const Register = () => {
 
   const AlterContext = useContext(alterContext);
   const { setAlter } = AlterContext;
+
+  const AuthContext = useContext(authContext);
+  const { register, error, clearErrors, isAuthenticated } = AuthContext;
+
   const { name, email, password, password2 } = user;
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      props.history.push('/');
+    }
+    if (error === '用户早已存在') {
+      setAlter(error, 'danger');
+      clearErrors();
+    }
+    //eslint-disable-next-line
+  }, [error, isAuthenticated, props.history]);
 
   const onSubmit = (e) => {
     e.preventDefault();
@@ -18,6 +35,8 @@ const Register = () => {
       setAlter('请输入所有信息', 'danger');
     } else if (password !== password2) {
       setAlter('密码不一致，请重新输入', 'danger');
+    } else {
+      register({ name, email, password });
     }
   };
 
