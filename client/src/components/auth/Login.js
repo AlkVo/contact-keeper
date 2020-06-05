@@ -1,5 +1,25 @@
-import React, { useState } from 'react';
-const Login = () => {
+import React, { useState, useContext, useEffect } from 'react';
+import alertContext from '../../context/alter/alertContext';
+import authContext from '../../context/auth/authContext';
+
+const Login = (props) => {
+  const AlertContext = useContext(alertContext);
+  const { setAlter } = AlertContext;
+
+  const AuthContext = useContext(authContext);
+  const { login, clearErrors, error, isAuthenticated } = AuthContext;
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      props.history.push('/');
+    }
+    if (error === '用户未注册' || error === '密码错误') {
+      setAlter(error, 'danger');
+      clearErrors();
+    }
+    //eslint-disable-next-line
+  }, [error, isAuthenticated, props.history]);
+
   const [user, setUser] = useState({
     email: '',
     password: '',
@@ -8,6 +28,8 @@ const Login = () => {
   const { email, password } = user;
   const onSubmit = (e) => {
     e.preventDefault();
+    if (email === '' || password === '') setAlter('请填写完所有信息', 'danger');
+    else login({ email, password });
     console.log('登录用户');
   };
 
@@ -25,6 +47,7 @@ const Login = () => {
             name='email'
             value={email}
             onChange={onChange}
+            required
           ></input>
         </div>
         <div className='form-group'>
@@ -34,6 +57,7 @@ const Login = () => {
             name='password'
             value={password}
             onChange={onChange}
+            required
           ></input>
         </div>
         <input
