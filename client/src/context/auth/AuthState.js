@@ -29,13 +29,14 @@ const AuthState = (props) => {
 
   //用户登录
   const loadUser = async () => {
-    if (localStorage.token) {
-      setAuthToken(localStorage.token);
-    }
+    setAuthToken(localStorage.token);
 
     try {
-      const res = await axios('/api/auth');
-      dispatch({ type: USER_LOADED, payload: res.data });
+      const res = await axios.get('/api/auth');
+      dispatch({
+        type: USER_LOADED,
+        payload: res.data,
+      });
     } catch (error) {
       dispatch({ type: AUTH_ERROR });
     }
@@ -44,7 +45,7 @@ const AuthState = (props) => {
   //注册用户
   const register = async (formData) => {
     const config = {
-      header: {
+      headers: {
         'Content-Type': 'application/json',
       },
     };
@@ -66,6 +67,30 @@ const AuthState = (props) => {
     }
   };
 
+  const login = async (formData) => {
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    };
+
+    try {
+      const res = await axios.post('/api/auth', formData, config);
+
+      dispatch({
+        type: LOGIN_SUCCESS,
+        payload: res.data,
+      });
+
+      loadUser();
+    } catch (error) {
+      dispatch({
+        type: LOGIN_FAIL,
+        payload: error.response.data.msg,
+      });
+    }
+  };
+
   //清除错误
   const clearErrors = () => {
     dispatch({ type: CLEAR_ERRORS });
@@ -80,6 +105,7 @@ const AuthState = (props) => {
         user: state.user,
         error: state.error,
         register,
+        login,
         clearErrors,
         loadUser,
       }}
