@@ -10,7 +10,7 @@ const User = require('../models/User');
 
 //@router POST api/auth
 //@详细   用户登录
-//@权限   private
+//@权限   public
 router.post(
   '/',
   [
