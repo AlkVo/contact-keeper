@@ -1,4 +1,4 @@
-import React, { useReducer, useState } from 'react';
+import React, { useReducer } from 'react';
 import AuthContext from './authContext';
 import authReducer from './authReducer';
 import axios from 'axios';
@@ -13,7 +13,6 @@ import {
   LOGIN_FAIL,
   LOGOUT,
   CLEAR_ERRORS,
-  CLEAR_CONTACTS,
 } from '../types';
 
 const AuthState = (props) => {
@@ -91,6 +90,13 @@ const AuthState = (props) => {
     }
   };
 
+  //退出登录
+  const logout = () => {
+    dispatch({
+      type: LOGOUT,
+    });
+  };
+
   //清除错误
   const clearErrors = () => {
     dispatch({ type: CLEAR_ERRORS });
@@ -108,6 +114,7 @@ const AuthState = (props) => {
         login,
         clearErrors,
         loadUser,
+        logout,
       }}
     >
       {props.children}
