@@ -1,5 +1,5 @@
 import React, { useReducer } from 'react';
-import { v4 as uuidv4 } from 'uuid';
+import axios from 'axios';
 import ContactContext from './contactContext';
 import contactReducer from './contactReducer';
 
@@ -20,42 +20,59 @@ const ContactState = (props) => {
   const initialState = {
     current: null,
     filtered: null,
-    contacts: [
-      {
-        id: 1,
-        name: 'Jill Johson',
-        email: 'jill@gmail.com',
-        phone: '111-111',
-        type: 'professional',
-      },
-      {
-        id: 2,
-        name: 'Two Johson',
-        email: 'two@gmail.com',
-        phone: '222-222',
-        type: 'personal',
-      },
-      {
-        id: 3,
-        name: 'Three Johson',
-        email: 'three@gmail.com',
-        phone: '333-333',
-        type: 'personal',
-      },
-    ],
+    contacts: null,
+    error: null,
+    loading: false,
   };
 
   const [state, dispatch] = useReducer(contactReducer, initialState);
 
+  //获取联系人
+  const getContacts = async () => {
+    try {
+      const res = await axios.get('/api/contacts');
+
+      dispatch({
+        type: GET_CONTACTS,
+        payload: res.data,
+      });
+    } catch (err) {
+      dispatch({
+        type: CONTACT_ERROR,
+        payload: err.response.msg,
+      });
+    }
+  };
   //添加联系人
-  const addContact = (contact) => {
-    contact.id = uuidv4();
-    dispatch({ type: ADD_CONTACT, payload: contact });
+  const addContact = async (contact) => {
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    };
+
+    try {
+      const res = await axios.post('/api/contacts', contact, config);
+      dispatch({
+        type: ADD_CONTACT,
+        payload: res.data,
+      });
+    } catch (err) {
+      dispatch({
+        type: CONTACT_ERROR,
+        payload: err.response.msg,
+      });
+    }
   };
 
   //删除联系人
-  const deleteContact = (id) => {
-    dispatch({ type: DELETE_CONTACT, payload: id });
+  const deleteContact = async (id) => {
+    try {
+      await axios.delete(`/api/contacts/${id}`);
+      dispatch({ type: DELETE_CONTACT, payload: id });
+    } catch (error) {
+      dispatch({ type: CONTACT_ERROR, payload: error.response.msg });
+    }
   };
 
   // 设置当前联系人
@@ -69,8 +86,29 @@ const ContactState = (props) => {
   };
 
   //更新联系人
-  const updateContact = (contact) => {
-    dispatch({ type: UPDATE_CONTACT, payload: contact });
+  const updateContact = async (contact) => {
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    };
+
+    try {
+      const res = await axios.put(
+        `/api/contacts/${contact._id}`,
+        contact,
+        config
+      );
+      dispatch({
+        type: UPDATE_CONTACT,
+        payload: res.data,
+      });
+    } catch (err) {
+      dispatch({
+        type: CONTACT_ERROR,
+        payload: err.response.msg,
+      });
+    }
   };
 
   // 过滤联系人
@@ -82,12 +120,19 @@ const ContactState = (props) => {
   const clearFilter = () => {
     dispatch({ type: CLEAR_FILTER });
   };
+
+  //清除联系人
+  const clearContacts = () => {
+    dispatch({ type: CLEAR_CONTACTS });
+  };
   return (
     <ContactContext.Provider
       value={{
         contacts: state.contacts,
         current: state.current,
         filtered: state.filtered,
+        error: state.error,
+        getContacts: getContacts,
         addContact,
         deleteContact,
         setCurrent,
@@ -95,6 +140,7 @@ const ContactState = (props) => {
         updateContact,
         filterContact,
         clearFilter,
+        clearContacts,
       }}
     >
       {props.children};
